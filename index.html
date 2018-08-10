@@ -10,6 +10,7 @@
 		<title>Epicodus Track Suggester</title>
 	</head>
 	<body>
+		<div id="overlay"></div>
 		<div class="container">
 			<div class="page-header">
 				<div class="panel panel-default" id="head-panel">
@@ -21,31 +22,31 @@
 			<p class="alert alert-default">Just answer a few questions and we'll suggest which of these Epicodus tracks suits your skills and interests:</p>
 			<div class="row">
 				<div class="col-md-4">
-					<div class="panel panel-danger">
+					<div class="panel panel-danger track-card">
 						<div class="panel-heading">
 							<h2>Ruby/Rails</h2>
 						</div>
-						<div class="panel-body track-card">
+						<div class="panel-body">
 							<p>A nice succinct description.</p>
 						</div>
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div class="panel panel-warning">
+					<div class="panel panel-warning track-card">
 						<div class="panel-heading">
 							<h2>CSS/React</h2>
 						</div>
-						<div class="panel-body track-card">
+						<div class="panel-body">
 							<p>A nice succinct description.</p>
 						</div>
 					</div>
 				</div>
 				<div class="col-md-4">
-					<div class="panel panel-success">
+					<div class="panel panel-success track-card">
 						<div class="panel-heading">
 							<h2>C#/.NET</h2>
 						</div>
-						<div class="panel-body track-card">
+						<div class="panel-body">
 							<p>A nice succinct description.</p>
 						</div>
 					</div>
@@ -56,6 +57,24 @@
 					Start!
 				</button>
 			</div>
+			
 		</div>
+		<div id="question-card-1" class="panel panel-default question-card">
+			<div class="panel-heading">
+				<h2>Do you prefer a flan?</h2>
+			</div>
+			<div class="panel-body">
+				<img class="question-image" src="img/placeholder0.png" alt="A snazzy relevant image"></img>
+				<div class="btn-group" role="group">
+					<button type="button" class="btn btn-success btn-wd yes-button">
+						Yes
+					</button>
+					<button type="button" class="btn btn-danger btn-wd no-button">
+						No
+					</button>
+				</div>
+			</div>
+		</div>
+		
 	</body>
 </html>
