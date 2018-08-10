@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -10,6 +10,52 @@
 		<title>Epicodus Track Suggester</title>
 	</head>
 	<body>
-		
+		<div class="container">
+			<div class="page-header">
+				<div class="panel panel-default" id="head-panel">
+					<div class="panel-body">
+						<h1><strong>Epicodus Track Suggester</strong><p></p><small>Find the track that's right for you</small></h1>
+					</div>
+				</div>
+			</div>
+			<p class="alert alert-default">Just answer a few questions and we'll suggest which of these Epicodus tracks suits your skills and interests:</p>
+			<div class="row">
+				<div class="col-md-4">
+					<div class="panel panel-danger">
+						<div class="panel-heading">
+							<h2>Ruby/Rails</h2>
+						</div>
+						<div class="panel-body track-card">
+							<p>A nice succinct description.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="panel panel-warning">
+						<div class="panel-heading">
+							<h2>CSS/React</h2>
+						</div>
+						<div class="panel-body track-card">
+							<p>A nice succinct description.</p>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+					<div class="panel panel-success">
+						<div class="panel-heading">
+							<h2>C#/.NET</h2>
+						</div>
+						<div class="panel-body track-card">
+							<p>A nice succinct description.</p>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div style="text-align:center">
+				<button id="start-button" type="button" class="btn btn-success btn-xl">
+					Start!
+				</button>
+			</div>
+		</div>
 	</body>
 </html>
