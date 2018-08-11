@@ -7,17 +7,27 @@ p {
 .container {
 	min-height:100vh;
 	border-radius:10px;
-	background-color: rgb(223, 223, 223);
-	padding:0px 50px 0px 50px;
+	background-color: rgb(194, 183, 183);
+	/* padding:0px 50px 0px 50px; */
 }
 .panel .track-card {
 	height:150px;
+}
+.question-card .panel-heading{
+	height:120px;
+}
+.panel .panel-body .question-card {
+	text-align:center;
+}
+.panel .winner {
+	padding:50px;
+	border:6px solid green;
 }
 .question-card {
 	text-align:center;
 	position:fixed;
 	width:60%;
-	/* height:75%; */
+	height:600px;
 	top:10%;
 	left:20%;
 	background-color:lightblue;
@@ -27,6 +37,9 @@ p {
 .question-image {
 	width:300px;
 	height:200px;
+}
+.btn-group {
+	margin-top:40px;
 }
 .btn-xl {
 	height:100px;
@@ -38,8 +51,8 @@ p {
 	width:200px;
 	height:80px;
 	font-size:20px;
-	margin-top:30px;
-	margin-bottom:20px;
+	/* margin-top:30px; */
+	/* margin-bottom:20px; */
 }
 #head-panel {
 	padding-left:20px;
