@@ -19,15 +19,13 @@ var questions = [
 		},
 		leftAction: function(){
 			updateTrackScores(questions[0].leftResponse.weights)
-			cards[0].destroy()
+			cards[0].swoop("out")
 			var nextCard = 1
 			new Card(nextCard)
-			console.log("showing " + ('#'+cards[1].divID))
-			// $('#'+cards[1].divID).show()
 		},
 		rightAction: function(){
 			updateTrackScores(questions[0].rightResponse.weights)
-			cards[0].destroy()
+			cards[0].swoop("out")
 			var nextCard = 1
 			new Card(nextCard)
 		},
@@ -53,13 +51,13 @@ var questions = [
 		},
 		leftAction: function(){
 			updateTrackScores(questions[1].leftResponse.weights)
-			cards[1].destroy()
+			cards[1].swoop("out")
 			nextCard = 2
 			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[1].rightResponse.weights)
-			cards[1].destroy()
+			cards[1].swoop("out")
 			nextCard = 2
 			new Card(nextCard)
 		},
@@ -85,13 +83,13 @@ var questions = [
 		},
 		leftAction: function(){
 			updateTrackScores(questions[2].leftResponse.weights)
-			cards[2].destroy()
+			cards[2].swoop("out")
 			nextCard = 3
 			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[2].rightResponse.weights)
-			cards[2].destroy()
+			cards[2].swoop("out")
 			nextCard = 3
 			new Card(nextCard)
 		},
@@ -117,13 +115,13 @@ var questions = [
 		},
 		leftAction: function(){
 			updateTrackScores(questions[3].leftResponse.weights)
-			cards[3].destroy()
+			cards[3].swoop("out")
 			nextCard = 4
 			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[3].rightResponse.weights)
-			cards[3].destroy()
+			cards[3].swoop("out")
 			nextCard = 4
 			new Card(nextCard)
 		},
@@ -149,16 +147,16 @@ var questions = [
 		},
 		leftAction: function(){
 			updateTrackScores(questions[4].leftResponse.weights)
-			cards[4].destroy()
+			cards[4].ease("out")
 			$('#overlay').hide()
 			produceResult()
 		},
 		rightAction: function(){
 			updateTrackScores(questions[4].rightResponse.weights)
-			cards[4].destroy()
+			cards[4].ease("out")
 			$('#overlay').hide()
 			produceResult()
 		},
 		cardObject: undefined
-	},
+	}
 ]
