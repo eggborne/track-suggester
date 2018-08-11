@@ -11,6 +11,9 @@ a {
 	padding:20px;
 	font-size:1.25em;
 }
+.page-header {
+	margin-top:0px;
+}
 .panel .track-card {
 	height:150px;
 }
@@ -19,6 +22,7 @@ a {
 }
 .panel .panel-body h3 {
 	font-size:1.4em;
+	margin:30px;
 }
 .panel .winner {
 	padding:50px;
@@ -50,10 +54,11 @@ a {
 	margin-top:16px;
 }
 .btn-wd {
-	width:30%;
+	width:40%;
 	min-width:200px;
 	height:80px;
 	font-size:24px;
+	margin: 10px 0px 10px 0px;
 	
 }
 #head-panel {

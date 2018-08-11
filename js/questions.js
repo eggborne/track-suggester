@@ -122,7 +122,7 @@ var questions = [
 		cardObject: undefined
 	},
 	{
-		query: "John or Paul?",
+		query: "John Lennon or Paul McCartney?",
 		leftResponse: {
 			text: "John",
 			weights: {
