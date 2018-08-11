@@ -39,7 +39,7 @@ h3 small {
 	text-align:center;
 	position:fixed;
 	width:90vw;
-	min-width:250px;
+	/* min-width:200px; */
 	max-width:700px;
 	max-height:90%;
 	top:10%;
@@ -80,8 +80,11 @@ h3 small {
 }
 @media screen and (max-width:768px) {
 	.container {
-		width:90vw;
-		padding:20px 10px 20px 10px;
+		width:93vw;
+		padding:20px 5px 20px 5px;
 		background:transparent;
+	}
+	#head-panel {
+		padding-left:0px;
 	}
 }
