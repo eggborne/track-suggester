@@ -7,6 +7,7 @@ a {
 .container {
 	min-height:100vh;
 	max-width:100vh;
+	min-width:300px;
 	background-color: rgb(194, 183, 183, 0.8);
 	padding:20px;
 	font-size:1.25em;
@@ -20,19 +21,25 @@ a {
 .panel .panel-body .question-card {
 	text-align:center;
 }
+.well {
+	padding-top:20px;
+	padding-bottom:20px;
+}
 .panel .panel-body h3 {
 	font-size:1.4em;
 	margin:30px;
 }
 .panel .winner {
-	padding:50px;
+	padding:50px 0px 50px 0px;
 	border:6px solid green;
 }
 .question-card {
 	text-align:center;
 	position: fixed;
 	width:90%;
-	max-width:700px;
+	min-width:250px;
+	max-width:800px;
+	max-height:100%;
 	top:10%;
 	background-color:lightblue;
 	z-index: 2;
@@ -57,12 +64,12 @@ a {
 	width:40%;
 	min-width:200px;
 	height:80px;
-	font-size:24px;
+	font-size:22px;
 	margin: 10px 0px 10px 0px;
 	
 }
 #head-panel {
-	padding-left:20px;
+	padding-left:10px;
 }
 #top-blurb {
 	width: 50%;
