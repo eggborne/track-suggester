@@ -1,8 +1,8 @@
 var questions = [
 	{
-		query: "Would you rather be an interior decorator or a construction worker?",
+		query: "Would you rather be an interior decorator or an architect?",
 		leftResponse: {
-			text: "<small>Interior Decorator</small>",
+			text: "Interior Decorator",
 			weights: {
 				rails:1,
 				react:2,
@@ -10,7 +10,7 @@ var questions = [
 			}
 		},
 		rightResponse: {
-			text: "<small>Construction Worker</small>",
+			text: "Architect",
 			weights: {
 				rails:1,
 				react:0,
@@ -20,14 +20,16 @@ var questions = [
 		leftAction: function(){
 			updateTrackScores(questions[0].leftResponse.weights)
 			cards[0].destroy()
-			new Card(1)
+			var nextCard = 1
+			new Card(nextCard)
 			console.log("showing " + ('#'+cards[1].divID))
 			// $('#'+cards[1].divID).show()
 		},
 		rightAction: function(){
 			updateTrackScores(questions[0].rightResponse.weights)
 			cards[0].destroy()
-			new Card(1)
+			var nextCard = 1
+			new Card(nextCard)
 		},
 		cardObject: undefined
 	},
@@ -52,12 +54,14 @@ var questions = [
 		leftAction: function(){
 			updateTrackScores(questions[1].leftResponse.weights)
 			cards[1].destroy()
-			new Card(2)
+			nextCard = 2
+			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[1].rightResponse.weights)
 			cards[1].destroy()
-			new Card(2)
+			nextCard = 2
+			new Card(nextCard)
 		},
 		cardObject: undefined
 	},
@@ -82,12 +86,14 @@ var questions = [
 		leftAction: function(){
 			updateTrackScores(questions[2].leftResponse.weights)
 			cards[2].destroy()
-			new Card(3)
+			nextCard = 3
+			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[2].rightResponse.weights)
 			cards[2].destroy()
-			new Card(3)
+			nextCard = 3
+			new Card(nextCard)
 		},
 		cardObject: undefined
 	},
@@ -112,12 +118,14 @@ var questions = [
 		leftAction: function(){
 			updateTrackScores(questions[3].leftResponse.weights)
 			cards[3].destroy()
-			new Card(4)
+			nextCard = 4
+			new Card(nextCard)
 		},
 		rightAction: function(){
 			updateTrackScores(questions[3].rightResponse.weights)
 			cards[3].destroy()
-			new Card(4)
+			nextCard = 4
+			new Card(nextCard)
 		},
 		cardObject: undefined
 	},
