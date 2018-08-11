@@ -110,12 +110,12 @@ var questions = [
 			}
 		},
 		leftAction: function(){
-			updateTrackScores(questions[2].leftResponse.weights)
+			updateTrackScores(questions[3].leftResponse.weights)
 			cards[3].destroy()
 			new Card(4)
 		},
 		rightAction: function(){
-			updateTrackScores(questions[2].rightResponse.weights)
+			updateTrackScores(questions[3].rightResponse.weights)
 			cards[3].destroy()
 			new Card(4)
 		},
@@ -140,13 +140,13 @@ var questions = [
 			}
 		},
 		leftAction: function(){
-			updateTrackScores(questions[2].leftResponse.weights)
+			updateTrackScores(questions[4].leftResponse.weights)
 			cards[4].destroy()
 			$('#overlay').hide()
 			produceResult()
 		},
 		rightAction: function(){
-			updateTrackScores(questions[2].rightResponse.weights)
+			updateTrackScores(questions[4].rightResponse.weights)
 			cards[4].destroy()
 			$('#overlay').hide()
 			produceResult()
