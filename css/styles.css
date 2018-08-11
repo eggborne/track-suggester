@@ -6,7 +6,7 @@ a {
 }
 .container {
 	min-height:100vh;
-	max-width:900px;
+	max-width:100vh;
 	background-color: rgb(194, 183, 183, 0.8);
 	padding:20px;
 	font-size:1.25em;
