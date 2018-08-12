@@ -148,13 +148,13 @@ var questions = [
 		leftAction: function(){
 			updateTrackScores(questions[4].leftResponse.weights)
 			cards[4].ease("out")
-			$('#overlay').hide()
+			dismissOverlay()
 			produceResult()
 		},
 		rightAction: function(){
 			updateTrackScores(questions[4].rightResponse.weights)
 			cards[4].ease("out")
-			$('#overlay').hide()
+			dismissOverlay()
 			produceResult()
 		},
 		cardObject: undefined
