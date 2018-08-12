@@ -1,16 +1,14 @@
 $(document).ready(function(){
+	createTrackCards()
 	new Card(0,true)
 	$('#start-button').click(function(){
 		cards[0].ease("in")
 		showOverlay()
-		$(this).css({
-			'transform': 'translateY(100px)',
-			'opacity':'0'
-		})
+		$(this).css({'transform':'translateY(100px)','opacity':'0'})
 	})
 	resultsGraph = new Graph()
 })
-var currentCard
+var ticker = 0
 var trackScores = {
 	'rails':0,
 	'react':0,
@@ -18,8 +16,8 @@ var trackScores = {
 }
 var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
 	'graph':[
-		[[4,4,4],'250px'],
-		[[4,4,4],'']
+		[[4,4,4],'230px'],
+		[[4,4,4],'auto']
 	]
 }
 var cards = []
@@ -53,11 +51,26 @@ function updateTrackScores(newData) {
 		trackScores[weight] += newData[weight]
 	}
 }
+function createTrackCards() {
+	for (var trackKey in tracks) {
+		var track = tracks[trackKey]
+		$('#track-row').append(`<div class="col-sm-4">
+			<div id="`+trackKey+`-panel" class="panel panel-`+track.color.name+` track-card">
+				<div class="panel-heading">
+						<h4><strong>`+track.displayName+`</strong></h4>
+				</div>
+				<div class="panel-body">
+					<p>`+track.description+`</p>
+				</div>
+			</div>
+		</div>`)
+	}
+}
 function Card(index,hide) {
 	index = index.toString()
 	this.questionObject = questions[index]
 	this.divID = "question-card-"+index
-	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 style="color:#555;margin-top:5px;margin-bottom:5px">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
+	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 style="font-size:18px;color:#555;margin-top:5px;margin-bottom:5px">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 style="font-size:18px" class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
 	$('#card-area').append(this.html)
 	$('#left-button-'+index).click(function(){
 		submitResponse(this.id[this.id.length-1],"left")
@@ -105,17 +118,11 @@ function produceResult() {
 	}
 	$('#top-blurb').remove()
 	$('#title-area').remove()
-	//* these are almost identical
-	if (winner==="rails") {
 		winnerHTML = 
-	`<div class="col-sm-3"></div> <div class="col-md-6"> <div id="winner-panel" class="panel panel-danger track-card border-danger"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>Ruby/Rails</h1> </div> </div> </div> <div class="col-md-3"></div>`
-	} else if (winner==="react") {
-		winnerHTML = 
-		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="winner-panel" class="panel panel-warning track-card border-warning"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>CSS/React</h1> </div> </div> </div> <div class="col-md-3"></div>`
-	} else if (winner==="net") {
-		winnerHTML = 
-		`<div class="col-md-3"></div> <div style="min-width:300px" class="col-md-6"> <div id="winner-panel" class="panel panel-success track-card border-success"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>C#/.NET</h1> </div> </div> </div> <div class="col-md-3"></div>`
-	}
+	`<div id="winner-panel">
+		<p>Your ideal track is</p>
+		<h1 class="label label-`+tracks[winner].color.name+`"><large>`+tracks[winner].displayName+`</h1>
+	</div>`
 	$('#track-row').html(winnerHTML)
 	$('#start-button').html("Try again")
 	$('#start-button').off().click(function(){
@@ -124,33 +131,35 @@ function produceResult() {
 	resultsGraph.reveal()
 }
 function Graph() {
-	this.html = 
-	`<div class="panel border-default" id="graph-panel">
-		<div class="panel-body" style="text-align:center">
-		</div> 
-	</div>`
+	this.html = `<div class="panel border-default" id="graph-panel"><div class="panel-body" style="text-align:center"></div></div>`
 	this.insertToDom = function(destination) {
 		$(destination).append(this.html)
 	}
 	this.reveal = function() {
+		$('html, body').animate({'scrollTop':0},100);
 		$('#graph-panel').show()
 		$('#winner-panel').show()
 		setTimeout(function(){
 			$('#graph-panel').css({'opacity':'1','transform':'scaleX(1) scaleY(1)'})
-			$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
+			bounce("#graph-panel",1.1,2)
 			setTimeout(function(){
 				resultsGraph.updateBars()
 				setTimeout(function(){
-					$('#winner-panel').css({'opacity':'1','transform': 'none'})
+					$('#winner-panel').css({'opacity':'1','transform':'scaleX(0) scaleY(0)'})
+					$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
+					setTimeout(function(){
+						bounce("#winner-panel",1.1)
+					},400)
 				},350)
 			},500)
 		},300)
 	}
+	
 	this.updateBars = function() {
 		var totalPoints = 0
-		var decimalForms = []
+		var decimalScores = []
 		for (var trackKey in trackScores) {
-			totalPoints += trackScores[trackKey]
+			totalPoints += trackScores[trackKey]/1.4 // magic number to vertically stretch bars
 		}
 		// get a 0 to 1 value for each score
 		for (var trackKey in trackScores) {
@@ -158,12 +167,12 @@ function Graph() {
 			if (decimal==0.0) {
 				decimal = 0.05
 			}
-			decimalForms.push(decimal)
+			decimalScores.push(decimal)
 		}
 		// set scaleY according to score
 		for (var t=0;t<Object.keys(trackScores).length;t++) {
 			$('#column-0-'+t+' .graph-bar').css({
-				'transform':'scaleY('+decimalForms[t]+')'
+				'transform':'scaleY('+decimalScores[t]+')'
 			})
 		}
 	}
@@ -171,28 +180,31 @@ function Graph() {
 	//
 	this.insertToDom("#graph-area")
 	generator.insertLayout(gridLayouts.graph,'#graph-panel .panel-body')
-	// insert bars
-	$('#column-0-0').html(
-		`<div class="graph-bar" style="background-color:#ff4444"></div>`
-	)
-	$('#column-0-1').html(
-		`<div class="graph-bar" style="background-color:#ffbb33"></div>`
-	)
-	$('#column-0-2').html(
-		`<div class="graph-bar" style="background-color:#00C851"></div>`
-	)
-	// insert bar labels
-	$('#column-1-0').html(
-		`<p class="label label-danger graph-label">Ruby/Rails</p>`
-	)
-	$('#column-1-1').html(
-		`<p class="label label-warning graph-label">CSS/React</p>`
-	)
-	$('#column-1-2').html(
-		`<p class="label label-success graph-label">C#/.NET</p>`
-	)
+	for (var trackKey in tracks) {
+		var track = tracks[trackKey]
+		var index = Object.keys(tracks).indexOf(trackKey)
+		// insert bar
+		$('#column-0-'+index).html(
+			`<div class="graph-bar" style="background-color:`+track.color.hex+`"></div>`
+		)
+		// insert bar label
+		$('#column-1-'+index).html(
+			`<p class="label label-`+track.color.name+` graph-label">`+track.displayName+`</p>`
+		)
+	}
 	// set column properties
 	$('#graph-panel .generated .generated').css({
 		'padding':'10px 0px 10px 0px',
 	})
+}
+function bounce(element,amount) {
+	var time = parseFloat($(element).css("transition-duration"))*1000
+	$(element).css({
+		"transform":"scaleX("+amount+") scaleY("+amount+")"
+	})
+	setTimeout(function(){
+		$(element).css({
+			"transform":"scaleX(1) scaleY(1)"
+		})
+	},time)
 }

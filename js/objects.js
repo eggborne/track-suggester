@@ -1,3 +1,26 @@
+var tracks = {
+	'rails':{
+		score: 0,
+		displayName: "Ruby/Rails",
+		description: "A nice succinct description for Ruby/Rails",
+		weights: [[1,1],[1,1],[1,1],[1,1],[1,2]],
+		color: {hex:"#ff4444",name:"danger"}
+	},
+	'react':{
+		score: 0,
+		displayName: "CSS/React",
+		description: "A nice succinct description for CSS/React",
+		weights: [[2,0],[0,2],[3,0],[3,0],[0,1]],
+		color: {hex:"#ffbb33",name:"warning"}
+	},
+	'net':{
+		score: 0,
+		displayName: "C#/.NET",
+		description: "A nice succinct description for C#/.NET",
+		weights: [[0,2],[2,0],[0,2],[0,4],[1,0]],
+		color: {hex:"#00C851",name:"success"}
+	}
+}
 var questions = [
 	{
 		query: "Would you rather be an interior decorator or an architect?",
@@ -12,9 +35,9 @@ var questions = [
 		rightResponse: {
 			text: "Architect",
 			weights: {
-				rails:1,
+				rails:0,
 				react:0,
-				net:3
+				net:2
 			}
 		},
 		leftAction: function(){
@@ -101,7 +124,7 @@ var questions = [
 			text: "Don't look right",
 			weights: {
 				rails:1,
-				react:2,
+				react:3,
 				net:0
 			}
 		},

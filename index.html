@@ -6,7 +6,7 @@
     <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="css/styles.css" rel="stylesheet" type="text/css">
     <script src="js/jquery-3.3.1.js"></script>
-    <script src="js/questions.js"></script>
+    <script src="js/objects.js"></script>
     <script src="js/column-generator.js"></script>
     <script src="js/scripts.js"></script>
 		<title>Epicodus Track Suggester</title>
@@ -24,42 +24,13 @@
 				</div>
 			</div>
 			<div class="well" id="top-blurb">
-				<small>Just answer a few questions and we'll suggest which of these <a href="https://epicodus.com/">Epicodus</a> tracks suits your skills and interests:</small>
+				Just answer a few questions and we'll suggest which of these <a href="https://epicodus.com/">Epicodus</a> tracks best suits your skills and interests:
 			</div>
 			<div id="track-row" class="row">
-				<div class="col-sm-4">
-					<div id="rails-panel" class="panel panel-danger track-card">
-						<div class="panel-heading">
-								<h4><strong>Ruby/Rails</strong></h4>
-						</div>
-						<div class="panel-body">
-							<p>A nice succinct description.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div id="react-panel" class="panel panel-warning track-card">
-						<div class="panel-heading">
-							<h4><strong>CSS/React</strong></h4>
-						</div>
-						<div class="panel-body">
-							<p>A nice succinct description.</p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-4">
-					<div id="net-panel" class="panel panel-success track-card">
-						<div class="panel-heading">
-							<h4><strong>C#/.NET</strong></h4>
-						</div>
-						<div class="panel-body">
-							<p>A nice succinct description.</p>
-						</div>
-					</div>
-				</div>
+			<!-- track information cards go here via createTrackCards()-->
 			</div>
 			<div id="graph-area">
-			<!-- result graph goes here via Graph().insertToDom() -->
+			<!-- graph goes here via resultGraph.insertToDom() -->
 			</div>
 			<div style="text-align:center">
 				<button id="start-button" type="button" class="btn btn-success btn-xl">
