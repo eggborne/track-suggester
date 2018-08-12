@@ -3,6 +3,10 @@ $(document).ready(function(){
 	$('#start-button').click(function(){
 		cards[0].ease("in")
 		showOverlay()
+		$(this).css({
+			'transform': 'translateY(100px)',
+			'opacity':'0'
+		})
 	})
 	resultsGraph = new Graph()
 })
@@ -21,6 +25,9 @@ var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
 var cards = []
 var generator = new ColumnGenerator()
 function dismissOverlay() {
+	$('.container').animate({
+		'opacity':'1'
+	},300)
 	$('#overlay').animate({
 		'opacity':'0'
 	},300,function(){ // after
@@ -37,6 +44,9 @@ function showOverlay() {
 	}).animate({
 		'opacity':'1'
 	},300)
+	$('.container').animate({
+		'opacity':'0.2'
+	},300)
 }
 function updateTrackScores(newData) {
 	for (var weight in newData) {
@@ -47,49 +57,30 @@ function Card(index,hide) {
 	index = index.toString()
 	this.questionObject = questions[index]
 	this.divID = "question-card-"+index
-	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3>Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 class="well" style="padding:20px">`+this.questionObject.query+`</h3><div class="panel-footer">  <button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
+	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 style="color:#555;margin-top:5px;margin-bottom:5px">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer">  <button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
 	$('#card-area').append(this.html)
 	$('#left-button-'+index).click(function(){
-		var index = this.id[this.id.length-1]
-		submitResponse(index,"left")
+		submitResponse(this.id[this.id.length-1],"left")
 	})
 	$('#right-button-'+index).click(function(){
-		var index = this.id[this.id.length-1]
-		submitResponse(index,"right")
+		submitResponse(this.id[this.id.length-1],"right")
 	})
 	this.questionObject.cardObject = this
-	this.ease = function(toggle) {
-		if (toggle==="in") {
-			$('#'+this.divID).css({
-				"left":"50vw",
-				"top":"-90vh"
-			})
-			$('#'+this.divID).animate({
-				'opacity':'1',
-				"top":"10%"
-			},300)
+	this.ease = function(direction) {
+		if (direction==="in") {
+			// start it offscreen above instead of to the right
+			$('#'+this.divID).css({"left":"50vw","top":"-90vh"})
+			$('#'+this.divID).animate({"top":"0px"},300)
 		} else {
-			$('#'+this.divID).animate({
-				'opacity':'0',
-				"top":"-90vh"
-			},300)
+			$('#'+this.divID).animate({"top":"-90vh"},300)
 		}
 	}
 	this.swoop = function(direction) {
-		if (direction === "in") {
-			$('#'+this.divID).animate({
-				'left':'-=100vw',
-				'opacity':'1'
-			},300)
+		if (direction==="in") {
+			$('#'+this.divID).animate({'left':'-=100vw','opacity':'1'},300)
 		} else {
-			$('#'+this.divID).animate({
-				'left':'-=100vw',
-				'opacity':'0'
-			},300)
+			$('#'+this.divID).animate({'left':'-=100vw','opacity':'0'},300)
 		}
-	}
-	this.destroy = function() {
-		$('#'+this.divID).hide()
 	}
 	cards.push(this)
 	!hide ? this.swoop("in") : false
@@ -112,26 +103,20 @@ function produceResult() {
 			runnerUp = track
 		}
 	}
-	$('#'+winner+"-panel").css({
-		'border':'9px solid green',
-		'transform':'scaleX(1.5) scaleY(1.5)'
-	})
-	$('#top-blurb').removeClass("well")
-	$('#top-blurb').css({"width":"80%","margin-left":"10%"})
-	$('#top-blurb').html(`<h3 style="text-align:center;">You seem best suited for</h3>`)
+	$('#top-blurb').remove()
+	$('#title-area').remove()
+	//* these are almost identical
 	if (winner==="rails") {
-	winnerHTML = 
-	`<div class="col-md-3"></div> <div class="col-md-6"> <div id="rails-panel" class="panel panel-danger track-card border-danger"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px"><large>Ruby/Rails</h1> </div> </div> </div> <div class="col-md-3"></div>`
+		winnerHTML = 
+	`<div class="col-sm-3"></div> <div class="col-md-6"> <div id="winner-panel" class="panel panel-danger track-card border-danger"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>Ruby/Rails</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	} else if (winner==="react") {
 		winnerHTML = 
-		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="react-panel" class="panel panel-warning track-card border-warning"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">CSS/React</h1> </div> </div> </div> <div class="col-md-3"></div>`
+		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="winner-panel" class="panel panel-warning track-card border-warning"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>CSS/React</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	} else if (winner==="net") {
 		winnerHTML = 
-		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="net-panel" class="panel panel-success track-card border-success"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">C#/.NET</h1> </div> </div> </div> <div class="col-md-3"></div>`
+		`<div class="col-md-3"></div> <div style="min-width:300px" class="col-md-6"> <div id="winner-panel" class="panel panel-success track-card border-success"> <div class="panel-heading winner-text"><div style="text-align:center;color:black;font-size:1.2em">Your ideal track is</div><h1 style="text-align:center;font-size:48px"><large>C#/.NET</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	}
-	runnerUp==="rails" ? runnerUp = "Ruby/Rails" : runnerUp==="react" ? runnerUp = "CSS/React" : runnerUp==="net" ? runnerUp = "C#/.NET" : false
 	$('#track-row').html(winnerHTML)
-	
 	$('#start-button').html("Try again")
 	$('#start-button').off().click(function(){
 		location.reload()
@@ -144,13 +129,21 @@ function Graph() {
 		<div class="panel-body" style="text-align:center">
 		</div> 
 	</div>`
-	this.insertToDom = function(destination,insertFunction) {
-		$(destination)[insertFunction](this.html)
+	this.insertToDom = function(destination) {
+		$(destination).append(this.html)
 	}
 	this.reveal = function() {
 		$('#graph-panel').show()
+		$('#winner-panel').show()
 		setTimeout(function(){
-			resultsGraph.updateBars()
+			$('#graph-panel').css({'opacity':'1','transform':'scaleX(1) scaleY(1)'})
+			$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
+			setTimeout(function(){
+				resultsGraph.updateBars()
+				setTimeout(function(){
+					$('#winner-panel').css({'opacity':'1','transform': 'none'})
+				},350)
+			},500)
 		},300)
 	}
 	this.updateBars = function() {
@@ -175,7 +168,8 @@ function Graph() {
 		}
 	}
 	// startup actions
-	this.insertToDom("#track-row","after")
+	//
+	this.insertToDom("#graph-area")
 	generator.insertLayout(gridLayouts.graph,'#graph-panel .panel-body')
 	// insert bars
 	$('#column-0-0').html(

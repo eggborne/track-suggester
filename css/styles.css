@@ -10,6 +10,7 @@ h3 small {
 .container {
 	max-width:100vw;
 	min-width:300px;
+	min-height:100vh;
 	width:80vw;
 	background-color: rgb(194, 183, 183, 0.8);
 	padding:30px 60px 30px 60px;
@@ -21,18 +22,19 @@ h3 small {
 .panel .track-card {
 	height:150px;
 }
-.panel .panel-body .question-card {
-	text-align:center;
-}
 .well {
 	padding-top:20px;
 	padding-bottom:20px;
 }
-.panel .panel-body h3 {
-	font-size:1.4em;
+.panel-body .well {
+	margin-top:0;
+	margin-bottom:100px;
 }
-.panel .winner {
+.panel .winner-text {
 	padding:30px 0px 30px 0px;
+}
+.question-card > .panel-body {
+	margin:12px;
 }
 .question-card {
 	text-align:center;
@@ -40,12 +42,12 @@ h3 small {
 	width:90vw;
 	max-width:700px;
 	max-height:90%;
-	top:10%;
+	top:0px;
+	left:150vw;
 	background-color:rgb(0, 179, 180, 0.9);
 	z-index: 2;
-	opacity:0;
 	transform: translateX(-50%);
-	left:150vw;
+	margin-top:5vw;
 }
 .btn-xl {
 	height:100px;
@@ -60,17 +62,17 @@ h3 small {
 	white-space: normal;
 	line-height:100%;
 	height:80px;
-	font-size:20px;
+	font-size:22px;
 	margin: 10px 0px 10px 0px;
 }
 .graph-bar {
 	height:100%;
 	width:40%;
 	margin:0 auto;
-	box-shadow: 0px 0px 0px 1px #444;
+	border:1px solid black;
 	transform:scaleY(0);
 	transform-origin: center bottom;
-	transition: all 1000ms ease !important;
+	transition: all 600ms linear;
 }
 .graph-label {
 	margin:0 auto;
@@ -81,8 +83,8 @@ h3 small {
 	padding-top:0px;
 	padding-left:10px;
 }
-#graph-area {
-	display:none;
+#track-row {
+	text-align:center;
 }
 #graph-panel {
 	width:90%;
@@ -91,7 +93,19 @@ h3 small {
 	margin-left:auto;
 	margin-right:auto;
 	height:360px;
+	transform: scaleX(0) scaleY(0);
 	display:none;
+	transition: all 600ms ease;
+}
+#winner-panel {
+	width:90%;
+	margin-left:5%;
+	opacity:0;
+	transform: translateY(-400px);
+	transition: all 400ms ease;
+}
+#start-button {
+	transition: all 400ms ease;
 }
 #overlay {
 	width:100vw;
@@ -118,6 +132,3 @@ h3 small {
 		background:transparent;
 	}
 }
-
-
-
