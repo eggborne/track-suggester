@@ -5,18 +5,30 @@ $(document).ready(function(){
 		cards[0].ease("in")
 		showOverlay()
 		$(this).css({'transform':'translateY(100px)','opacity':'0'})
+		$('body').css({'overflow-y':'hidden'}) 
+		//* should not need to reenable scroll if results page is sized correctly
 	})
 	resultsGraph = new Graph()
+	if ($('body').width() <= 500) { 
+		$('.track-column').removeClass('col-xs-4')
+		$('.track-column').addClass('col-md-4')
+	}
 })
 var ticker = 0
+//
+
 var trackScores = {
 	'rails':0,
 	'react':0,
 	'net':0
 }
+// plan graph height to avoid overflow-y on results page
+var graphHeight = window.innerHeight*0.3
+graphHeight > 250 ? graphHeight = 250 : false
+graphHeight < 100 ? graphHeight = 100 : false
 var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
 	'graph':[
-		[[4,4,4],'230px'],
+		[[4,4,4],graphHeight+'px'],
 		[[4,4,4],'auto']
 	]
 }
@@ -54,10 +66,10 @@ function updateTrackScores(newData) {
 function createTrackCards() {
 	for (var trackKey in tracks) {
 		var track = tracks[trackKey]
-		$('#track-row').append(`<div class="col-sm-4">
+		$('#track-row').append(`<div class="col-xs-4 track-column">
 			<div id="`+trackKey+`-panel" class="panel panel-`+track.color.name+` track-card">
-				<div class="panel-heading">
-						<h4><strong>`+track.displayName+`</strong></h4>
+				<div class="panel-body">
+						<h4 class="label label-`+track.color.name+`"><strong>`+track.displayName+`</strong></h4>
 				</div>
 				<div class="panel-body">
 					<p>`+track.description+`</p>
@@ -70,7 +82,7 @@ function Card(index,hide) {
 	index = index.toString()
 	this.questionObject = questions[index]
 	this.divID = "question-card-"+index
-	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 style="font-size:18px;color:#555;margin-top:5px;margin-bottom:5px">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 style="font-size:18px" class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
+	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 class="query-text">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
 	$('#card-area').append(this.html)
 	$('#left-button-'+index).click(function(){
 		submitResponse(this.id[this.id.length-1],"left")
@@ -124,6 +136,8 @@ function produceResult() {
 		<h1 class="label label-`+tracks[winner].color.name+`"><large>`+tracks[winner].displayName+`</h1>
 	</div>`
 	$('#track-row').html(winnerHTML)
+	$('#start-button').removeClass('btn-xl')
+	$('#start-button').addClass('btn-wd')
 	$('#start-button').html("Try again")
 	$('#start-button').off().click(function(){
 		location.reload()
@@ -131,7 +145,7 @@ function produceResult() {
 	resultsGraph.reveal()
 }
 function Graph() {
-	this.html = `<div class="panel border-default" id="graph-panel"><div class="panel-body" style="text-align:center"></div></div>`
+	this.html = `<div class="panel panel-lg border-default" id="graph-panel"><div class="panel-body" style="text-align:center"></div></div>`
 	this.insertToDom = function(destination) {
 		$(destination).append(this.html)
 	}
@@ -146,15 +160,16 @@ function Graph() {
 				resultsGraph.updateBars()
 				setTimeout(function(){
 					$('#winner-panel').css({'opacity':'1','transform':'scaleX(0) scaleY(0)'})
-					$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
 					setTimeout(function(){
 						bounce("#winner-panel",1.1)
+						setTimeout(function(){
+							$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
+						},800)
 					},400)
 				},350)
 			},500)
 		},300)
 	}
-	
 	this.updateBars = function() {
 		var totalPoints = 0
 		var decimalScores = []
@@ -208,3 +223,14 @@ function bounce(element,amount) {
 		})
 	},time)
 }
+// workaround to overwrite Bootstrap's grid breakpoint
+
+$(window).resize(function(){
+  if ($('body').width() <= 500 && $('.track-column').hasClass('col-xs-4')) {
+		$('.track-column').removeClass('col-xs-4')
+		$('.track-column').addClass('col-md-4')
+  } else if ($('body').width() > 500 && $('.track-column').hasClass('col-md-4')) {
+		$('.track-column').removeClass('col-md-4')
+		$('.track-column').addClass('col-xs-4')
+	}
+})
