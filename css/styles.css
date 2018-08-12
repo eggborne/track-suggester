@@ -34,7 +34,7 @@ h3 small {
 	padding:30px 0px 30px 0px;
 }
 .question-card > .panel-body {
-	margin:12px;
+	/* margin:12px; */
 }
 .question-card {
 	text-align:center;
@@ -57,8 +57,8 @@ h3 small {
 	margin-top:5px;
 }
 .btn-wd {
-	width:40%;
-	min-width:120px;
+	width:48%;
+	min-width:80px;
 	white-space: normal;
 	line-height:100%;
 	height:80px;
@@ -123,6 +123,13 @@ h3 small {
 	}
 	.graph-label {
 		font-size:14px;
+	}
+	.btn-wd {
+		font-size: 16px;
+	}
+	.panel-body .well {
+		margin-top:0;
+		margin-bottom:20px;
 	}
 }
 @media screen and (max-width:768px) {
