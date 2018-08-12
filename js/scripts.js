@@ -4,7 +4,17 @@ var trackScores = {
 	'react':0,
 	'net':0
 }
+var gridLayouts = // each row is [[n,n,n],'height'] where col-md-n 
+{
+	graph:
+	[
+		[[4,4,4],'280px'],
+		[[4,4,4],'']
+	]
+}
 var cards = []
+var generator = new ColumnGenerator()
+
 $(document).ready(function(){
 	new Card(0,true)
 	$('#start-button').click(function(){
@@ -14,6 +24,7 @@ $(document).ready(function(){
 			"opacity":1
 		},300)
 	})
+	resultsGraph = new Graph()
 })
 function updateTrackScores(newData) {
 	for (var weight in newData) {
@@ -86,8 +97,6 @@ function produceResult() {
 	console.log(sortedScores)
 	winner = sortedScores[2]
 	runnerUp = sortedScores[1]
-	console.log("winner " + winner)
-	console.log("2nd --" + runnerUp)
 	for (var track in trackScores) {
 		if (trackScores[track]===winner) {
 			winner = track
@@ -95,8 +104,6 @@ function produceResult() {
 			runnerUp = track
 		}
 	}
-	console.log("winner " + winner)
-	console.log("2nd " + runnerUp)
 	$('#'+winner+"-panel").css({
 		'border':'9px solid green',
 		'transform':'scaleX(1.5) scaleY(1.5)'
@@ -106,19 +113,58 @@ function produceResult() {
 	$('#top-blurb').html(`<h3 style="text-align:center;">Suggestion:</h3>`)
 	if (winner==="rails") {
 	winnerHTML = 
-	`<div class="col-md-3"></div> <div class="col-md-6"> <div id="rails-panel" class="panel panel-danger track-card border-danger"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px"><large>Ruby/Rails</h1 style="text-align:center"> </div> </div> </div> <div class="col-md-3"></div>`
+	`<div class="col-md-3"></div> <div class="col-md-6"> <div id="rails-panel" class="panel panel-danger track-card border-danger"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px"><large>Ruby/Rails</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	} else if (winner==="react") {
 		winnerHTML = 
-		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="react-panel" class="panel panel-warning track-card border-warning"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">CSS/React</h1 style="text-align:center"> </div> </div> </div> <div class="col-md-3"></div>`
+		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="react-panel" class="panel panel-warning track-card border-warning"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">CSS/React</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	} else if (winner==="net") {
 		winnerHTML = 
-		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="net-panel" class="panel panel-success track-card border-success"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">C#/.NET</h1 style="text-align:center"> </div> </div> </div> <div class="col-md-3"></div>`
+		`<div class="col-md-3"></div> <div class="col-md-6"> <div id="net-panel" class="panel panel-success track-card border-success"> <div class="panel-heading winner"> <h1 style="text-align:center;font-size:48px">C#/.NET</h1> </div> </div> </div> <div class="col-md-3"></div>`
 	}
 	runnerUp==="rails" ? runnerUp = "Ruby/Rails" : runnerUp==="react" ? runnerUp = "CSS/React" : runnerUp==="net" ? runnerUp = "C#/.NET" : false
 	$('#track-row').html(winnerHTML)
-	$('#track-row').after(`<p style="text-align:center">...but you may also enjoy <strong>`+runnerUp+`.</strong>`)
+	$('#graph-panel').show()
 	$('#start-button').html("Try again")
 	$('#start-button').off().click(function(){
 		location.reload()
+	})
+}
+function Graph() {
+	this.html = 
+	`<div class="panel border-default" id="graph-panel">
+		<div class="panel-body" style="text-align:center">
+		</div> 
+	</div>`
+	this.insertToDom = function(destination,insertFunction) {
+		$(destination)[insertFunction](this.html)
+	}
+	this.reveal = function() {
+		console.log("revealing")
+		$('#graph-panel').show()
+	}
+	this.insertToDom("#track-row","after")
+	generator.insertLayout(gridLayouts.graph,'#graph-panel .panel-body')
+	// insert bars
+	$("#column-0-0").html(
+		`<div class="graph-bar" style="background-color:#ff4444"></div>`
+	)
+	$("#column-0-1").html(
+		`<div class="graph-bar" style="background-color:#ffbb33"></div>`
+	)
+	$("#column-0-2").html(
+		`<div class="graph-bar" style="background-color:#00C851"></div>`
+	)
+	// insert bar labels
+	$("#column-1-0").html(
+		`<p class="label label-danger graph-label">Ruby/Rails</p>`
+	)
+	$("#column-1-1").html(
+		`<p class="label label-warning graph-label">CSS/React</p>`
+	)
+	$("#column-1-2").html(
+		`<p class="label label-success graph-label">C#/.NET</p>`
+	)
+	$('#graph-panel .generated .generated').css({ // all columns
+		'padding':'10px 0px 10px 0px',
 	})
 }
