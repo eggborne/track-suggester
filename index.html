@@ -13,7 +13,7 @@
 	</head>
 	<body>
 		<div id="overlay"></div>
-		<div class="container">
+		<div class="container" id="container">
 			<div class="page-header" id="title-area">
 				<div class="panel panel-default" id="head-panel">
 					<div class="panel-body">
@@ -26,13 +26,15 @@
 			<div class="well" id="top-blurb">
 				Just answer a few questions and we'll suggest which of these <a href="https://epicodus.com/">Epicodus</a> tracks best suits your skills and interests:
 			</div>
-			<div id="track-row" class="row">
-			<!-- track information cards go here via createTrackCards()-->
+			<div id="track-area">
+				<!-- <div id="track-row-0" class="row track-row"> -->
+				<!-- track information cards go here via createTrackCards()-->
+				<!-- </div> -->
 			</div>
 			<div id="graph-area">
 			<!-- graph goes here via resultGraph.insertToDom() -->
 			</div>
-			<div style="text-align:center">
+			<div id="foot-area" style="text-align:center">
 				<button id="start-button" type="button" class="btn btn-success btn-xl">
 					Start!
 				</button>

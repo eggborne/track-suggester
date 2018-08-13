@@ -5,8 +5,6 @@ $(document).ready(function(){
 		cards[0].ease("in")
 		showOverlay()
 		$(this).css({'transform':'translateY(100px)','opacity':'0'})
-		$('body').css({'overflow-y':'hidden'}) 
-		//* should not need to reenable scroll if results page is sized correctly
 	})
 	resultsGraph = new Graph()
 	if ($('body').width() <= 500) { 
@@ -23,7 +21,7 @@ var trackScores = {
 	'net':0
 }
 // plan graph height to avoid overflow-y on results page
-var graphHeight = window.innerHeight*0.3
+var graphHeight = window.innerHeight*0.4 // max amount view height can spare
 graphHeight > 250 ? graphHeight = 250 : false
 graphHeight < 100 ? graphHeight = 100 : false
 var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
@@ -66,7 +64,10 @@ function updateTrackScores(newData) {
 function createTrackCards() {
 	for (var trackKey in tracks) {
 		var track = tracks[trackKey]
-		$('#track-row').append(`<div class="col-xs-4 track-column">
+		//* could loop this for multiple rows
+		var currentRow = 0
+		$('#track-area').append(`<div id="track-row-`+currentRow+`" class="row track-row">`)
+		$('#track-row-'+currentRow).append(`<div class="col-xs-4 track-column">
 			<div id="`+trackKey+`-panel" class="panel panel-`+track.color.name+` track-card">
 				<div class="panel-body">
 						<h4 class="label label-`+track.color.name+`"><strong>`+track.displayName+`</strong></h4>
@@ -76,6 +77,7 @@ function createTrackCards() {
 				</div>
 			</div>
 		</div>`)
+		//*
 	}
 }
 function Card(index,hide) {
@@ -94,10 +96,10 @@ function Card(index,hide) {
 	this.ease = function(direction) {
 		if (direction==="in") {
 			// start it offscreen above instead of to the right
-			$('#'+this.divID).css({"left":"50vw","top":"-90vh"})
+			$('#'+this.divID).css({"left":"50vw","top":"-100vh"})
 			$('#'+this.divID).animate({"top":"0px"},300)
 		} else {
-			$('#'+this.divID).animate({"top":"-90vh"},300)
+			$('#'+this.divID).animate({"top":"-100vh","opacity":"0"},300)
 		}
 	}
 	this.swoop = function(direction) {
@@ -135,7 +137,8 @@ function produceResult() {
 		<p>Your ideal track is</p>
 		<h1 class="label label-`+tracks[winner].color.name+`"><large>`+tracks[winner].displayName+`</h1>
 	</div>`
-	$('#track-row').html(winnerHTML)
+	$('#track-row-0').html(winnerHTML)
+	//* remove other rows here if they exist
 	$('#start-button').removeClass('btn-xl')
 	$('#start-button').addClass('btn-wd')
 	$('#start-button').html("Try again")
@@ -224,12 +227,16 @@ function bounce(element,amount) {
 	},time)
 }
 // workaround to overwrite Bootstrap's grid breakpoint
-
 $(window).resize(function(){
-  if ($('body').width() <= 500 && $('.track-column').hasClass('col-xs-4')) {
+	if (window.innerWidth > window.innerHeight) {
+		var widthLimit = 500
+	} else {
+		var widthLimit = 440
+	}
+  if ($('body').width() <= widthLimit && $('.track-column').hasClass('col-xs-4')) {
 		$('.track-column').removeClass('col-xs-4')
 		$('.track-column').addClass('col-md-4')
-  } else if ($('body').width() > 500 && $('.track-column').hasClass('col-md-4')) {
+  } else if ($('body').width() > widthLimit && $('.track-column').hasClass('col-md-4')) {
 		$('.track-column').removeClass('col-md-4')
 		$('.track-column').addClass('col-xs-4')
 	}
