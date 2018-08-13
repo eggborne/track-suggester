@@ -172,13 +172,15 @@ var questions = [
 			updateTrackScores(questions[4].leftResponse.weights)
 			cards[4].ease("out")
 			dismissOverlay()
-			produceResult()
+			prepareResultScreen()
+			resultsGraph.reveal()
 		},
 		rightAction: function(){
 			updateTrackScores(questions[4].rightResponse.weights)
 			cards[4].ease("out")
 			dismissOverlay()
-			produceResult()
+			prepareResultScreen()
+			resultsGraph.reveal()
 		},
 		cardObject: undefined
 	}

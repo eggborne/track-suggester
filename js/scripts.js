@@ -5,16 +5,28 @@ $(document).ready(function(){
 		cards[0].ease("in")
 		showOverlay()
 		$(this).css({'transform':'translateY(100px)','opacity':'0'})
+		userStarted = counter
+	})
+	$('#start-button-2').click(function(){
+		cards[0].ease("in")
+		showOverlay()
+		$(this).css({'transform':'translateY(60px)','opacity':'0'})
+		userStarted = counter
+	})
+	$('#again-button').click(function(){
+		location.reload()
 	})
 	resultsGraph = new Graph()
-	if ($('body').width() <= 500) { 
+	if ($('body').width() <= 600) { 
 		$('.track-column').removeClass('col-xs-4')
 		$('.track-column').addClass('col-md-4')
 	}
+	window.requestAnimationFrame(bounceLoop)
+	
 })
-var ticker = 0
-//
-
+var bouncingElement = "#start-button-2"
+var userStarted = -1
+var counter = 0
 var trackScores = {
 	'rails':0,
 	'react':0,
@@ -117,38 +129,37 @@ function submitResponse(buttonIndex,side) {
 	var action = questionObj[side+"Action"]
 	action()
 }
-function produceResult() {
+function getWinner() {
 	var sortedScores = Object.values(trackScores).sort(function(a,b){
 		return a-b
 	})
 	winner = sortedScores[2]
-	runnerUp = sortedScores[1]
 	for (var track in trackScores) {
 		if (trackScores[track]===winner) {
 			winner = track
-		} else if (trackScores[track]===runnerUp) {
-			runnerUp = track
 		}
+		}
+	return winner
 	}
+function prepareResultScreen() {
+	var winner = getWinner()
 	$('#top-blurb').remove()
 	$('#title-area').remove()
-		winnerHTML = 
+		var winnerHTML = 
 	`<div id="winner-panel">
 		<p>Your ideal track is</p>
 		<h1 class="label label-`+tracks[winner].color.name+`"><large>`+tracks[winner].displayName+`</h1>
 	</div>`
 	$('#track-row-0').html(winnerHTML)
 	//* remove other rows here if they exist
-	$('#start-button').removeClass('btn-xl')
-	$('#start-button').addClass('btn-wd')
-	$('#start-button').html("Try again")
-	$('#start-button').off().click(function(){
+	$('#start-button-2').html("Try again")
+	$('#start-button-2').off().click(function(){
 		location.reload()
 	})
 	resultsGraph.reveal()
 }
 function Graph() {
-	this.html = `<div class="panel panel-lg border-default" id="graph-panel"><div class="panel-body" style="text-align:center"></div></div>`
+	this.html = `<div class="panel panel-lg border-default" id="graph-panel"><div class="panel-body"></div></div>`
 	this.insertToDom = function(destination) {
 		$(destination).append(this.html)
 	}
@@ -166,7 +177,7 @@ function Graph() {
 					setTimeout(function(){
 						bounce("#winner-panel",1.1)
 						setTimeout(function(){
-							$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
+							$('#start-button-2').css({'transform': 'translateY(0)','opacity':'1'})
 						},800)
 					},400)
 				},350)
@@ -225,6 +236,20 @@ function bounce(element,amount) {
 			"transform":"scaleX(1) scaleY(1)"
 		})
 	},time)
+}
+function bounceLoop() {
+	if (counter%60===0) {
+		bounce(bouncingElement,1.1)
+	}
+	if (counter === userStarted) {
+		counter = 0
+		userStarted = -1
+		window.cancelAnimationFrame(bounceLoop)
+		// $(bouncingElement).css({'transform':'none'})
+		return
+	}
+	counter++
+	window.requestAnimationFrame(bounceLoop)
 }
 // workaround to overwrite Bootstrap's grid breakpoint
 $(window).resize(function(){
