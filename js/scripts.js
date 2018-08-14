@@ -27,11 +27,6 @@ $(document).ready(function(){
 var bouncingElement = "#start-button-2"
 var userStarted = -1
 var counter = 0
-var trackScores = {
-	'rails':0,
-	'react':0,
-	'net':0
-}
 // plan graph height to avoid overflow-y on results page
 var graphHeight = window.innerHeight*0.4 // max amount view height can spare
 graphHeight > 250 ? graphHeight = 250 : false
@@ -42,6 +37,7 @@ var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
 		[[4,4,4],'auto']
 	]
 }
+var trackScores = {}
 var cards = []
 var generator = new ColumnGenerator()
 function dismissOverlay() {
@@ -68,9 +64,10 @@ function showOverlay() {
 		'opacity':'0.2'
 	},300)
 }
-function updateTrackScores(newData) {
-	for (var weight in newData) {
-		trackScores[weight] += newData[weight]
+function updateTrackScores(index1,index2) {
+	for (var trackKey in tracks) {
+		var award = parseInt(tracks[trackKey].weights[index1,index2])
+		tracks[trackKey].score += award
 	}
 }
 function createTrackCards() {
@@ -130,17 +127,20 @@ function submitResponse(buttonIndex,side) {
 	action()
 }
 function getWinner() {
+	var trackScores = {}
+	for (var trackKey in tracks) {
+		trackScores[trackKey] = tracks[trackKey].score
+	}
 	var sortedScores = Object.values(trackScores).sort(function(a,b){
 		return a-b
 	})
-	winner = sortedScores[2]
-	for (var track in trackScores) {
-		if (trackScores[track]===winner) {
-			winner = track
+	for (var trackKey in tracks) {
+		if (tracks[trackKey].score===sortedScores[2]) {
+			winner = trackKey
 		}
-		}
-	return winner
 	}
+	return winner
+}
 function prepareResultScreen() {
 	var winner = getWinner()
 	$('#top-blurb').remove()
@@ -187,19 +187,19 @@ function Graph() {
 	this.updateBars = function() {
 		var totalPoints = 0
 		var decimalScores = []
-		for (var trackKey in trackScores) {
-			totalPoints += trackScores[trackKey]/1.4 // magic number to vertically stretch bars
+		for (var trackKey in tracks) {
+			totalPoints += tracks[trackKey].score/1.4 // magic number to vertically stretch bars
 		}
 		// get a 0 to 1 value for each score
-		for (var trackKey in trackScores) {
-			var decimal = (trackScores[trackKey]/totalPoints).toPrecision(2)
-			if (decimal==0.0) {
+		for (var trackKey in tracks) {
+			var decimal = (tracks[trackKey].score/totalPoints).toPrecision(2)
+			if (decimal < 0.05) {
 				decimal = 0.05
 			}
 			decimalScores.push(decimal)
 		}
 		// set scaleY according to score
-		for (var t=0;t<Object.keys(trackScores).length;t++) {
+		for (var t=0;t<Object.keys(tracks).length;t++) {
 			$('#column-0-'+t+' .graph-bar').css({
 				'transform':'scaleY('+decimalScores[t]+')'
 			})

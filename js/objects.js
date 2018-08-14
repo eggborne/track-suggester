@@ -21,33 +21,24 @@ var tracks = {
 		color: {hex:"#00C851",name:"success"}
 	}
 }
+//* leftAction and rightAction functions could be created in a loop?
 var questions = [
 	{
 		query: "Would you rather be an interior decorator or an architect?",
 		leftResponse: {
-			text: "Interior Decorator",
-			weights: {
-				rails:1,
-				react:2,
-				net:0
-			}
+			text: "Interior Decorator"
 		},
 		rightResponse: {
-			text: "Architect",
-			weights: {
-				rails:0,
-				react:0,
-				net:2
-			}
+			text: "Architect"
 		},
 		leftAction: function(){
-			updateTrackScores(questions[0].leftResponse.weights)
+			updateTrackScores(0,0) // ie track.weights[0][0]
 			cards[0].swoop("out")
 			var nextCard = 1
 			new Card(nextCard)
 		},
 		rightAction: function(){
-			updateTrackScores(questions[0].rightResponse.weights)
+			updateTrackScores(0,1)
 			cards[0].swoop("out")
 			var nextCard = 1
 			new Card(nextCard)
@@ -55,31 +46,21 @@ var questions = [
 		cardObject: undefined
 	},
 	{
-		query: "Who's cooler: Bill Gates or Marc Ecko?",
+		query: "Who's cooler: Bill Gates or Willem Dafoe?",
 		leftResponse: {
-			text: "Bill Gates",
-			weights: {
-				rails:1,
-				react:0,
-				net:2
-			}
+			text: "Bill Gates"
 		},
 		rightResponse: {
-			text: "Marc Ecko",
-			weights: {
-				rails:1,
-				react:2,
-				net:0
-			}
+			text: "Willem Dafoe"
 		},
 		leftAction: function(){
-			updateTrackScores(questions[1].leftResponse.weights)
+			updateTrackScores(1,0)
 			cards[1].swoop("out")
 			nextCard = 2
 			new Card(nextCard)
 		},
 		rightAction: function(){
-			updateTrackScores(questions[1].rightResponse.weights)
+			updateTrackScores(1,1)
 			cards[1].swoop("out")
 			nextCard = 2
 			new Card(nextCard)
@@ -89,29 +70,19 @@ var questions = [
 	{
 		query: "Do you straighten the pictures in hotel rooms?",
 		leftResponse: {
-			text: "Of course",
-			weights: {
-				rails:1,
-				react:3,
-				net:0
-			}
+			text: "Of course"
 		},
 		rightResponse: {
-			text: "No way",
-			weights: {
-				rails:1,
-				react:0,
-				net:2
-			}
+			text: "No way"
 		},
 		leftAction: function(){
-			updateTrackScores(questions[2].leftResponse.weights)
+			updateTrackScores(2,0)
 			cards[2].swoop("out")
 			nextCard = 3
 			new Card(nextCard)
 		},
 		rightAction: function(){
-			updateTrackScores(questions[2].rightResponse.weights)
+			updateTrackScores(2,1)
 			cards[2].swoop("out")
 			nextCard = 3
 			new Card(nextCard)
@@ -121,29 +92,19 @@ var questions = [
 	{
 		query: "Complete this sentence: \"It really grinds my gears when things...\"",
 		leftResponse: {
-			text: "Don't look right",
-			weights: {
-				rails:1,
-				react:3,
-				net:0
-			}
+			text: "Don't look right"
 		},
 		rightResponse: {
-			text: "Don't work right",
-			weights: {
-				rails:1,
-				react:0,
-				net:4
-			}
+			text: "Don't work right"
 		},
 		leftAction: function(){
-			updateTrackScores(questions[3].leftResponse.weights)
+			updateTrackScores(3,0)
 			cards[3].swoop("out")
 			nextCard = 4
 			new Card(nextCard)
 		},
 		rightAction: function(){
-			updateTrackScores(questions[3].rightResponse.weights)
+			updateTrackScores(3,1)
 			cards[3].swoop("out")
 			nextCard = 4
 			new Card(nextCard)
@@ -153,30 +114,20 @@ var questions = [
 	{
 		query: "John Lennon or Paul McCartney?",
 		leftResponse: {
-			text: "John",
-			weights: {
-				rails:1,
-				react:0,
-				net:1
-			}
+			text: "John"
 		},
 		rightResponse: {
-			text: "Paul",
-			weights: {
-				rails:2,
-				react:1,
-				net:0
-			}
+			text: "Paul"
 		},
 		leftAction: function(){
-			updateTrackScores(questions[4].leftResponse.weights)
+			updateTrackScores(4,0)
 			cards[4].ease("out")
 			dismissOverlay()
 			prepareResultScreen()
 			resultsGraph.reveal()
 		},
 		rightAction: function(){
-			updateTrackScores(questions[4].rightResponse.weights)
+			updateTrackScores(4,1)
 			cards[4].ease("out")
 			dismissOverlay()
 			prepareResultScreen()
