@@ -1,13 +1,9 @@
 $(document).ready(function(){
+	
 	createTrackCards()
+	
 	new Card(0,true)
 	$('#start-button').click(function(){
-		cards[0].ease("in")
-		showOverlay()
-		$(this).css({'transform':'translateY(100px)','opacity':'0'})
-		userStarted = counter
-	})
-	$('#start-button-2').click(function(){
 		cards[0].ease("in")
 		showOverlay()
 		$(this).css({'transform':'translateY(60px)','opacity':'0'})
@@ -21,10 +17,10 @@ $(document).ready(function(){
 		$('.track-column').removeClass('col-xs-4')
 		$('.track-column').addClass('col-md-4')
 	}
-	window.requestAnimationFrame(bounceLoop)
-	
+	setResponseActions()
+	bounceLoop()
 })
-var bouncingElement = "#start-button-2"
+var bouncingElement = "#start-button"
 var userStarted = -1
 var counter = 0
 // plan graph height to avoid overflow-y on results page
@@ -66,15 +62,15 @@ function showOverlay() {
 }
 function updateTrackScores(index1,index2) {
 	for (var trackKey in tracks) {
-		var award = parseInt(tracks[trackKey].weights[index1,index2])
+		var award = parseInt(tracks[trackKey].weights[index1][index2])
 		tracks[trackKey].score += award
 	}
 }
 function createTrackCards() {
+	var currentRow = 0
 	for (var trackKey in tracks) {
 		var track = tracks[trackKey]
 		//* could loop this for multiple rows
-		var currentRow = 0
 		$('#track-area').append(`<div id="track-row-`+currentRow+`" class="row track-row">`)
 		$('#track-row-'+currentRow).append(`<div class="col-xs-4 track-column">
 			<div id="`+trackKey+`-panel" class="panel panel-`+track.color.name+` track-card">
@@ -93,15 +89,14 @@ function Card(index,hide) {
 	index = index.toString()
 	this.questionObject = questions[index]
 	this.divID = "question-card-"+index
-	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 class="query-text">Question `+(cards.length+1)+` of `+Object.keys(questions).length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
+	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 class="query-text">Question `+(cards.length+1)+` of `+questions.length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`
 	$('#card-area').append(this.html)
 	$('#left-button-'+index).click(function(){
-		submitResponse(this.id[this.id.length-1],"left")
+		submitResponse(parseInt(this.id[this.id.length-1]),"left")
 	})
 	$('#right-button-'+index).click(function(){
-		submitResponse(this.id[this.id.length-1],"right")
+		submitResponse(parseInt(this.id[this.id.length-1]),"right")
 	})
-	this.questionObject.cardObject = this
 	this.ease = function(direction) {
 		if (direction==="in") {
 			// start it offscreen above instead of to the right
@@ -123,8 +118,8 @@ function Card(index,hide) {
 }
 function submitResponse(buttonIndex,side) {
 	var questionObj = questions[buttonIndex]
-	var action = questionObj[side+"Action"]
-	action()
+	var action = questionObj[side+"Response"].clickAction
+	action(buttonIndex)
 }
 function getWinner() {
 	var trackScores = {}
@@ -152,8 +147,8 @@ function prepareResultScreen() {
 	</div>`
 	$('#track-row-0').html(winnerHTML)
 	//* remove other rows here if they exist
-	$('#start-button-2').html("Try again")
-	$('#start-button-2').off().click(function(){
+	$('#start-button').html("Try again")
+	$('#start-button').off().click(function(){
 		location.reload()
 	})
 	resultsGraph.reveal()
@@ -177,7 +172,7 @@ function Graph() {
 					setTimeout(function(){
 						bounce("#winner-panel",1.1)
 						setTimeout(function(){
-							$('#start-button-2').css({'transform': 'translateY(0)','opacity':'1'})
+							$('#start-button').css({'transform': 'translateY(0)','opacity':'1'})
 						},800)
 					},400)
 				},350)
@@ -206,7 +201,6 @@ function Graph() {
 		}
 	}
 	// startup actions
-	//
 	this.insertToDom("#graph-area")
 	generator.insertLayout(gridLayouts.graph,'#graph-panel .panel-body')
 	for (var trackKey in tracks) {
@@ -224,6 +218,41 @@ function Graph() {
 	// set column properties
 	$('#graph-panel .generated .generated').css({
 		'padding':'10px 0px 10px 0px',
+	})
+}
+function showResults() {
+	dismissOverlay()
+	prepareResultScreen()
+	resultsGraph.reveal()
+}
+function setResponseActions() {
+	questions.forEach(function(questionObj,i){
+		var leftAction, rightAction
+		if (i === questions.length-1) {
+			leftAction = function(){
+				updateTrackScores(i,0)
+				cards[i].ease("out")
+				showResults()
+			}
+			rightAction = function(){
+				updateTrackScores(i,1)
+				cards[i].ease("out")
+				showResults()
+			}
+		} else {
+			leftAction = function(){
+				updateTrackScores(i,0)
+				cards[i].swoop("out")
+				new Card(i+1)
+			}
+			rightAction = function(){
+				updateTrackScores(i,1)
+				cards[i].swoop("out")
+				new Card(i+1)
+			}
+		}
+		questionObj.leftResponse.clickAction = leftAction
+		questionObj.rightResponse.clickAction = rightAction
 	})
 }
 function bounce(element,amount) {
@@ -245,7 +274,6 @@ function bounceLoop() {
 		counter = 0
 		userStarted = -1
 		window.cancelAnimationFrame(bounceLoop)
-		// $(bouncingElement).css({'transform':'none'})
 		return
 	}
 	counter++
