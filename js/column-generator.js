@@ -1,8 +1,10 @@
 function ColumnGenerator() {
 	this.insertLayout = function(layoutArray,destination,bordered) {
 		var parent = destination || "#stage";
-		var border = '';
-		bordered ? border = ';border: 1px solid black' : false;
+		var border = ''
+		if (bordered) {
+			border = ";border: 1px solid black";
+		}
 		var rows = layoutArray.length;
 		for (var r=0;r<rows;r++) {
 			var columns = layoutArray[r][0].length;
