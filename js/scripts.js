@@ -5,7 +5,7 @@ $(document).ready(function(){
 		cards[0].ease("in")
 		showOverlay();
 		$(this).css({'transform':'translateY(60px)','opacity':'0'});
-		userStarted = counter;
+		USER_STARTED = COUNTER;
 	})
 	$('#again-button').click(function(){
 		location.reload();
@@ -18,13 +18,12 @@ $(document).ready(function(){
 	setResponseActions();
 	bounceLoop();
 });
-var bouncingElement = "#start-button";
-var userStarted = -1;
-var counter = 0;
+var BOUNCING_ELEMENT = "#start-button";
+var USER_STARTED = -1;
+var COUNTER = 0;
 // plan graph height to avoid overflow-y on results page
 var graphHeight = window.innerHeight*0.4; // max amount view height can spare
-graphHeight > 250 ? graphHeight = 250 : false;
-graphHeight < 100 ? graphHeight = 100 : false;
+graphHeight > 250 ? graphHeight = 250 : graphHeight < 100 ? graphHeight = 100 : false;
 var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
 	'graph':[
 		[[4,4,4],graphHeight+'px'],
@@ -265,16 +264,16 @@ function bounce(element,amount) {
 	},time);
 }
 function bounceLoop() {
-	if (counter%60===0) {
-		bounce(bouncingElement,1.1);
+	if (COUNTER%60===0) {
+		bounce(BOUNCING_ELEMENT,1.1);
 	}
-	if (counter === userStarted) {
-		counter = 0;
-		userStarted = -1;
+	if (COUNTER === USER_STARTED) {
+		COUNTER = 0;
+		USER_STARTED = -1;
 		window.cancelAnimationFrame(bounceLoop);
 		return;
 	}
-	counter++;
+	COUNTER++;
 	window.requestAnimationFrame(bounceLoop);
 }
 // workaround to overwrite Bootstrap's grid breakpoint
