@@ -57,7 +57,6 @@ var questions = [
 		rightResponse: {
 			text: "Don't work right"
 		},
-		position: 3
 	},
 	{
 		query: "John Lennon or Paul McCartney?",
