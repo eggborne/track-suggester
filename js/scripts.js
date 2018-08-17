@@ -1,33 +1,44 @@
-$(document).ready(function(){
+$(function(){
 	createTrackCards();
+	stackTracksAtBreakpoint();
 	new Card(0,true);
 	$('#start-button').click(function(){
-		cards[0].ease("in")
+		cards[0].ease("in");
 		showOverlay();
 		$(this).css({'transform':'translateY(60px)','opacity':'0'});
-		USER_STARTED = COUNTER;
-	})
+		gUserStarted = gCounter;
+	});
 	$('#again-button').click(function(){
 		location.reload();
-	})
+	});
 	resultsGraph = new Graph();
-	if ($('body').width() <= 600) { 
-		$('.track-column').removeClass('col-xs-4');
-		$('.track-column').addClass('col-md-4');
-	}
 	setResponseActions();
 	bounceLoop();
 });
-var BOUNCING_ELEMENT = "#start-button";
-var USER_STARTED = -1;
-var COUNTER = 0;
+var gBouncingElement = "#start-button";
+var gUserStarted = -1;
+var gCounter = 0;
 // plan graph height to avoid overflow-y on results page
-var graphHeight = window.innerHeight*0.4; // max amount view height can spare
-graphHeight > 250 ? graphHeight = 250 : graphHeight < 100 ? graphHeight = 100 : false;
-var gridLayouts = { // each row is [[n,n,n],'height'] where col-md-n
+var gGraphHeight = window.innerHeight*0.4; // max amount view height can spare
+if (gGraphHeight > 250) {
+	gGraphHeight = 250;
+} else if (gGraphHeight < 100) {
+	gGraphHeight = 100;
+}
+/**
+ * An object whose key-value pairs are the name of a grid layout and an array, 
+ * which is passed to ColumnGenerator's .insertLayout() method to provide it with a 'blueprint' to use when creating a grid.
+ * Each 'row' of the array corresponds to a grid row and contains:
+ * 
+ * 1. An array containing one or more integers, which each represent a column and its relative width in the row.
+ *    .insertLayout() iterates through it and concatenates its values into the HTML string it produces.
+ * 
+ * 2. (Optional - default 'auto') A string containing a CSS-compatible height value for the row.
+ */
+var gGridLayouts = {
 	'graph':[
-		[[4,4,4],graphHeight+'px'],
-		[[4,4,4],'auto']
+		[[4,4,4],gGraphHeight+'px'],
+		[[4,4,4]]
 	]
 }
 var trackScores = {};
@@ -57,18 +68,29 @@ function showOverlay() {
 		'opacity':'0.2'
 	},300);
 }
-function updateTrackScores(index1,index2) {
+
+/**
+ * Adds points to track scores according to question and response.
+ *
+ * @param {number} questionIndex The index of the desired point value array in tracks.weights
+ * @param {number} responseIndex The index of the desired point value in tracks.weights[questionIndex]
+ */
+function updateTrackScores(questionIndex,responseIndex) {
 	for (var trackKey in tracks) {
-		var award = parseInt(tracks[trackKey].weights[index1][index2]);
+		var award = parseInt(tracks[trackKey].weights[questionIndex][responseIndex]);
 		tracks[trackKey].score += award;
 	}
 }
+/**
+ * 
+ */
 function createTrackCards() {
 	var currentRow = 0;
 	for (var trackKey in tracks) {
 		var track = tracks[trackKey]
 		//* could loop this for multiple rows
 		$('#track-area').append(`<div id="track-row-`+currentRow+`" class="row track-row">`);
+		// column breakpoint (usually set by col-xx-4) is handled by window.resize()
 		$('#track-row-'+currentRow).append(`<div class="col-xs-4 track-column">
 			<div id="`+trackKey+`-panel" class="panel panel-`+track.color.name+` track-card">
 				<div class="panel-body">
@@ -83,20 +105,30 @@ function createTrackCards() {
 	}
 }
 function Card(index,hide) {
+	/**
+	 * Creates a Bootstrap card to display to the user.
+	 *
+	 * Inserts values gathered from questions[index] into an HTML string which is then appended to the DOM.
+	 * Produces Card() objects with two buttons, and sets their .click() methods.
+	 * 
+	 * @param {number} index The index questions[i] of the object from which to take question and button text data.
+													 Also utilized to give unique ID names to the #question-card-i element and its buttons.
+
+	 * @param {boolean} [hide] Whether to keep the card obscured, rather than call swoop("in") immediately on instantiation.
+	 */
 	index = index.toString();
 	this.questionObject = questions[index];
 	this.divID = "question-card-"+index;
 	this.html = `<div id="`+this.divID+`" class="panel panel-default question-card"> <div class="panel-heading"> <h3 class="query-text">Question `+(cards.length+1)+` of `+questions.length+`</h3> </div> <div class="panel-body"><h3 class="well">`+this.questionObject.query+`</h3><div class="panel-footer" style="padding-left:5px;padding-right:5px"><button id="left-button-`+index+`" type="button" class="btn btn-success btn-wd left-button">`+this.questionObject.leftResponse.text+`</button> <button id="right-button-`+index+`" type="button" class="btn btn-info btn-wd right-button">`+this.questionObject.rightResponse.text+`</button></div></div>`;
 	$('#card-area').append(this.html);
 	$('#left-button-'+index).click(function(){
-		submitResponse(parseInt(this.id[this.id.length-1]),"left");
+		submitResponse(index,"left"); 
 	});
 	$('#right-button-'+index).click(function(){
-		submitResponse(parseInt(this.id[this.id.length-1]),"right");
+		submitResponse(index,"right");
 	});
 	this.ease = function(direction) {
 		if (direction==="in") {
-			// start it offscreen above instead of to the right
 			$('#'+this.divID).css({"left":"50vw","top":"-100vh"});
 			$('#'+this.divID).animate({"top":"0px"},300);
 		} else {
@@ -111,13 +143,32 @@ function Card(index,hide) {
 		}
 	}
 	cards.push(this);
-	!hide ? this.swoop("in") : false;
+	if (!hide) {
+		this.swoop("in");
+	}
 }
+
+/**
+ * Calls a response's associated .clickAction() method.
+ * 
+ * @param {number} buttonIndex The index of the clicked answer button's associated question in array 'questions'
+ * @param {string} side 			 A string "left" or "right" to be concatenated to "Response"
+ */
 function submitResponse(buttonIndex,side) {
 	var questionObj = questions[buttonIndex];
 	var action = questionObj[side+"Response"].clickAction;
 	action(buttonIndex);
 }
+
+/**
+ * Determines the recommended track for the user.
+ * 
+ * Iterates through 'tracks' to create an object consisting of track:score pairs.
+ * Creates an array of the sorted scores.
+ * Iterates through 'tracks' again, and selects the key whose .score matches the last member of the sorted score array.
+ * 
+ * @return {string} The key in object 'tracks' representing the recommended track.
+ */
 function getWinner() {
 	var trackScores = {};
 	for (var trackKey in tracks) {
@@ -151,6 +202,15 @@ function prepareResultScreen() {
 	resultsGraph.reveal();
 }
 function Graph() {
+	/**
+	 * Creates a graph.
+	 *
+	 * On instantiation of a Graph() object:
+	 * 1. Inserts a div #graph-panel to the DOM.
+	 * 2. Calls generator.insertLayout() to fill #graph-panel with a Bootstrap grid.
+	 * 3. Inserts graph content (bars and labels) using data from the object 'tracks'.
+	 * 
+	 */
 	this.html = `<div class="panel panel-lg border-default" id="graph-panel"><div class="panel-body"></div></div>`;
 	this.insertToDom = function(destination) {
 		$(destination).append(this.html);
@@ -197,9 +257,11 @@ function Graph() {
 			});
 		}
 	}
-	// startup actions
+	// append this.html to the DOM
 	this.insertToDom("#graph-area");
-	generator.insertLayout(gridLayouts.graph,'#graph-panel .panel-body');
+	// generate a grid into the graph panel's body
+	generator.insertLayout(gGridLayouts.graph,'#graph-panel .panel-body');
+	// place bars and labels into the grid with text and colors from the 'tracks' object
 	for (var trackKey in tracks) {
 		var track = tracks[trackKey];
 		var index = Object.keys(tracks).indexOf(trackKey);
@@ -222,10 +284,23 @@ function showResults() {
 	prepareResultScreen();
 	resultsGraph.reveal();
 }
+
+/**
+ * Gives a .clickAction method to question responses in 'questions' object.
+ * 
+ * Iterates through the 'questions' array and gives each member .leftResponse.clickAction 
+ * and .rightResponse.clickAction methods.
+ * 
+ * Uses the current index i to:
+ * 1. Pass the corresponding questionIndex to updateTrackScores().
+ * 2. Select the proper Card in 'cards' to swoop/ease out.
+ * 3. Instantiate a new Card with data from cards[i+1] (if necessary).
+ * 
+ */
 function setResponseActions() {
 	questions.forEach(function(questionObj,i){
 		var leftAction, rightAction;
-		if (i === questions.length-1) {
+		if (i === questions.length-1) { // last question; ease Card out and call showResults()
 			leftAction = function(){
 				updateTrackScores(i,0);
 				cards[i].ease("out");
@@ -236,7 +311,7 @@ function setResponseActions() {
 				cards[i].ease("out");
 				showResults();
 			}
-		} else {
+		} else { // there are still more questions; swoop Card out and instantiate a new Card
 			leftAction = function(){
 				updateTrackScores(i,0);
 				cards[i].swoop("out");
@@ -252,6 +327,17 @@ function setResponseActions() {
 		questionObj.rightResponse.clickAction = rightAction;
 	})
 }
+
+/**
+ * Give an element a bouncing animation.
+ * 
+ * Alters an element's scaleX and scaleY properties by a specified amount,
+ * and then sets them to 1 in a setTimeout() timed to the element's transition-duration CSS property.
+ * 
+ * @param {Object} element The element to apply the effect to.
+ * @param {number} amount  How much the scale should be modified.
+ * 
+ */
 function bounce(element,amount) {
 	var time = parseFloat($(element).css("transition-duration"))*1000;
 	$(element).css({
@@ -263,31 +349,45 @@ function bounce(element,amount) {
 		});
 	},time);
 }
+
+/** 
+ * Calls bounce(gBouncingElement) every 1000ms as measured by incrementing counter gCounter.
+ * Repeatedly invokes itself via window.requestAnimationFrame() until user clicks Start button.
+ */
 function bounceLoop() {
-	if (COUNTER%60===0) {
-		bounce(BOUNCING_ELEMENT,1.1);
+	if (gCounter%60===0) {
+		bounce(gBouncingElement,1.1);
 	}
-	if (COUNTER === USER_STARTED) {
-		COUNTER = 0;
-		USER_STARTED = -1;
+	if (gCounter === gUserStarted) {
+		gCounter = 0;
+		gUserStarted = -1;
 		window.cancelAnimationFrame(bounceLoop);
 		return;
 	}
-	COUNTER++;
+	gCounter++;
 	window.requestAnimationFrame(bounceLoop);
 }
-// workaround to overwrite Bootstrap's grid breakpoint
-$(window).resize(function(){
+/**
+* Overrides Bootstrap's responsive column stacking for .track-column members by
+	swapping col-XX-4 for one that will stack/unstack at the desired breakpoint.
+ */
+function stackTracksAtBreakpoint() {
+	
 	if (window.innerWidth > window.innerHeight) {
 		var widthLimit = 500;
 	} else {
 		var widthLimit = 440;
 	}
   if ($('body').width() <= widthLimit && $('.track-column').hasClass('col-xs-4')) {
+		// col-md will immediately cause this width to stack
 		$('.track-column').removeClass('col-xs-4');
-		$('.track-column').addClass('col-md-4');
+		$('.track-column').addClass('col-md-4'); 
   } else if ($('body').width() > widthLimit && $('.track-column').hasClass('col-md-4')) {
+		// col-xs will immediately cause this width to unstack
 		$('.track-column').removeClass('col-md-4');
-		$('.track-column').addClass('col-xs-4');
+		$('.track-column').addClass('col-xs-4'); 
 	}
+}
+$(window).resize(function(){
+	stackTracksAtBreakpoint()
 });
