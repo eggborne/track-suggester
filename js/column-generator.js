@@ -1,4 +1,12 @@
+
 function ColumnGenerator() {
+	/**
+	 * Adds an empty Bootstrap grid to the DOM.
+	 * 
+	 * @param {array} layoutArray An array containing row and column data.
+	 * @param {string} [destination=#stage] A selector for the element to append the grid to.
+	 * @param {boolean} [bordered=false] Whether the grid should have a 1px solid black border.
+	 */
 	this.insertLayout = function(layoutArray,destination,bordered) {
 		var parent = (destination || "#stage");
 		var border = ''
