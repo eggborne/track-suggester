@@ -1,23 +1,23 @@
 var tracks = {
-	'rails':{
+	'rails': {
 		score: 0,
 		displayName: "Ruby/Rails",
 		description: "A nice succinct description for Ruby/Rails",
 		color: {hex:"#ff4444",name:"danger"}
 	},
-	'react':{
+	'react': {
 		score: 0,
 		displayName: "CSS/React",
 		description: "A nice succinct description for CSS/React",
 		color: {hex:"#ffbb33",name:"warning"}
 	},
-	'net':{
+	'net': {
 		score: 0,
 		displayName: "C#/.NET",
 		description: "A nice succinct description for C#/.NET",
 		color: {hex:"#00C851",name:"success"}
 	}
-}
+};
 var questions = [
 	{
 		query: "Would you rather be an interior decorator or an architect?",
@@ -60,7 +60,7 @@ var questions = [
 		},
 		rightResponse: {
 			text: "Don't work right",
-			weights: [2,0,3]
+			weights: [1,0,3]
 		},
 	},
 	{
@@ -71,10 +71,11 @@ var questions = [
 		},
 		rightResponse: {
 			text: "Paul",
-			weights: [2,1,0]
+			weights: [1,2,0]
 		}
 	}
-]
+];
+// plan graph height to avoid overflow-y on results page
 var gGraphHeight = window.innerHeight*0.4; // max amount view height can spare
 if (gGraphHeight > 250) {
 	gGraphHeight = 250;
@@ -98,4 +99,4 @@ var gGridLayouts = {
 		[[4,4,4],gGraphHeight+'px'],
 		[[4,4,4]]
 	]
-}
+};
