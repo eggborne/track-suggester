@@ -75,3 +75,27 @@ var questions = [
 		}
 	}
 ]
+var gGraphHeight = window.innerHeight*0.4; // max amount view height can spare
+if (gGraphHeight > 250) {
+	gGraphHeight = 250;
+} else if (gGraphHeight < 100) {
+	gGraphHeight = 100;
+}
+/**
+ * An object whose key-value pairs are the name of a grid layout and an array, 
+ * which is passed to ColumnGenerator's .insertLayout() method to provide it with a 'blueprint' to use when creating a grid.
+ * 
+ * Each 'row' of the array corresponds to a grid row and contains:
+ * 
+ * 1. An array containing one or more integers, which each represent a column and its relative width in the row.
+ *    ColumnGenerator.insertLayout() iterates through it and concatenates its values into the HTML string it produces.
+ * 
+ * 2. (Optional - default 'auto') A string containing a CSS-compatible 'height' value for the row.
+ */
+var gGridLayouts = {
+	'graph':
+	[
+		[[4,4,4],gGraphHeight+'px'],
+		[[4,4,4]]
+	]
+}
