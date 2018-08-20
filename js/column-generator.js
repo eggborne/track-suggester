@@ -1,4 +1,6 @@
-
+/**
+ * Creates instances of ColumnGenerator().
+ */
 function ColumnGenerator() {
 	/**
 	 * Adds an empty Bootstrap grid to the DOM.
@@ -28,9 +30,3 @@ function ColumnGenerator() {
 		}
 	}
 }
-// var exampleLayout = 
-// [
-//   [[4,4,4],'300px'],
-//   [[4,3,2,3],'600px'],
-//   [[4,4,4],'100px']
-// ]
